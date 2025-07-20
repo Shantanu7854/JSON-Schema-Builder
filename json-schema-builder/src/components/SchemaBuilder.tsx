@@ -1,127 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form';
 import { Button } from './ui/button';
-import type { SchemaField, Schema } from '../types/schema';
 import FieldRow from './FieldRow';
 import JsonPreview from './JsonPreview';
 import { v4 as uuidv4 } from 'uuid';
+import type { SchemaField, Schema } from '../types/schema';
 
-interface SchemaBuilderProps { }
-
-const SchemaBuilder: React.FC<SchemaBuilderProps> = () => {
-  const methods = useForm<{ fields: SchemaField[] }>({
-    defaultValues: {
-      fields: [],
-    },
-    mode: 'onChange',
-  });
+const SchemaBuilder: React.FC = () => {
+  const methods = useForm<{ fields: SchemaField[] }>({ defaultValues: { fields: [] } });
   const { control, watch, handleSubmit, getValues } = methods;
+  const { fields, append, remove } = useFieldArray({ control, name: 'fields' });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'fields',
-  });
+  const [json, setJson] = useState('');
 
-  const [jsonOutput, setJsonOutput] = useState<string>('');
-
-  const buildJsonSchema = (schemaFields: SchemaField[]): Schema => {
-    const jsonSchema: Schema = {};
-    schemaFields.forEach(field => {
-      if (field.type === 'nested' && field.children) {
-        jsonSchema[field.name] = buildJsonSchema(field.children);
-      } else if (field.type === 'string' || field.type === 'number') {
-        jsonSchema[field.name] = field.value !== undefined && field.value !== null
-          ? field.value
-          : (field.type === 'string' ? '' : 0);
+  const generateJson = (fields: SchemaField[]): Schema => {
+    const result: Schema = {};
+    fields.forEach(f => {
+      if (f.type === 'nested' && f.children) {
+        result[f.name] = generateJson(f.children);
+      } else {
+        result[f.name] = f.value ?? (f.type === 'number' ? 0 : '');
       }
     });
-    return jsonSchema;
+    return result;
   };
 
-  const allFields = watch('fields');
   useEffect(() => {
-    try {
-      const currentSchema = getValues('fields');
-      const generatedJson = buildJsonSchema(currentSchema);
-      setJsonOutput(JSON.stringify(generatedJson, null, 2));
-    } catch (error) {
-      console.error("Error generating JSON:", error);
-      setJsonOutput("Error generating JSON: " + (error as Error).message);
-    }
-  }, [allFields, getValues]);
+    const generated = generateJson(getValues('fields'));
+    setJson(JSON.stringify(generated, null, 2));
+  }, [watch('fields')]);
 
-  const handleAddField = () => {
-    append({
-      id: uuidv4(),
-      name: `field${fields.length + 1}`,
-      type: 'string',
-      value: '',
-    });
-  };
-
-  const handleDeleteField = (index: number) => {
-    remove(index);
+  const handleAdd = () => {
+    append({ id: uuidv4(), name: '', type: 'string', value: '' });
   };
 
   const onSubmit = (data: { fields: SchemaField[] }) => {
-    console.log("Form Data Submitted:", data);
-    const finalJson = buildJsonSchema(data.fields);
-    console.log("Final JSON Schema:", finalJson);
-    alert("Check console for form data and generated JSON!");
+    alert("JSON generated! Check console.");
+    console.log("Form Data:", data);
+    console.log("Generated JSON:", generateJson(data.fields));
   };
 
   return (
     <FormProvider {...methods}>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 bg-gray-50 dark:bg-gray-900 rounded-lg shadow-xl"
+        className="p-4 max-w-7xl mx-auto flex flex-col lg:flex-row gap-6"
       >
+        {/* Left Colun */}
+        <div className="flex-1 space-y-4">
+          <h2 className="text-2xl font-bold">JSON Schema Builder</h2>
 
-        {/* Added bg, shadow, and rounded corners */}
+          {fields.map((field, i) => (
+            <FieldRow
+              key={field.id}
+              field={field}
+              index={i}
+              parentPath="fields"
+              onDelete={remove}
+            />
+          ))}
 
-        {/* Left Column */}
-        <div className="space-y-6">
-          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white text-center md:text-left mb-6">JSON Schema Builder</h1> {/* Enhanced title style */}
-
-          <div className="space-y-4 min-h-[400px]"> {/* Added min-height for consistent layout */}
-            {fields.length === 0 && (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-10">
-                No fields added yet. Click "+ Add Item" to start building your schema!
-              </p>
-            )}
-            {fields.map((field, index) => (
-              <FieldRow
-                key={field.id}
-                field={field as SchemaField}
-                index={index}
-                parentPath="fields"
-                onDelete={handleDeleteField}
-              />
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-3 pt-4 border-t border-gray-200 dark:border-gray-700"> {/* Added top border for separation */}
-            <Button
-              type="button"
-              onClick={handleAddField}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
-            >
-              + Add Item
-            </Button>
-            <Button
-              type="submit"
-              className="w-full bg-indigo-700 hover:bg-indigo-800 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
-            >
-              Generate JSON Schema
+          <div className="flex gap-2">
+            <Button type="button" onClick={handleAdd} className="flex-1">
+              + Add Field
             </Button>
           </div>
         </div>
 
         {/* Right Column */}
-        <div className="h-full flex flex-col"> {/* Added flex-col for better layout of json preview */}
-          <JsonPreview jsonString={jsonOutput} />
+        <div className="w-full lg:w-1/2">
+          <JsonPreview jsonString={json} />
+          <div className="max-w-4xl mx-auto mb-6 p-4 border rounded-md bg-gray-50 dark:bg-gray-800 dark:text-white">
+            <h3 className="text-xl font-semibold mb-2">How to Use</h3>
+            <ul className="list-disc pl-5 space-y-1 text-sm">
+              <li>Click <strong>+ Add Field</strong> to add a new field to your schema.</li>
+              <li>Enter a <strong>name</strong>, choose a <strong>type</strong>, and optionally provide a <strong>value</strong>.</li>
+              <li>Select <strong>"Nested"</strong> as type to add child fields inside the current field.</li>
+            </ul>
+          </div>
+
         </div>
       </form>
+
     </FormProvider>
   );
 };

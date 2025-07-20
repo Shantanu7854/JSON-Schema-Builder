@@ -11,3 +11,4 @@ export interface SchemaField {
 export interface Schema {
   [key: string]: string | number | Schema;
 }
+
