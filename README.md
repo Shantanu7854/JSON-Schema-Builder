@@ -4,13 +4,13 @@ Deployed Link: [json-schema-builder-kzx1.vercel.app/](json-schema-builder-kzx1.v
 
 ---
 
-### ✨ Features
+### Features
 
-* ➕ Add/edit/delete fields
-* 🔁 Support for **nested schemas**
-* 🧪 Live **JSON preview**
-* 💡 Built with **React Hook Form**, **ShadCN**, and **Tailwind**
-* ⚡ Lightning-fast development with **Vite + TypeScript**
+* Add/edit/delete fields
+* Support for **nested schemas**
+* Live **JSON preview**
+* Built with **React Hook Form**, **ShadCN**, and **Tailwind**
+* Lightning-fast development with **Vite + TypeScript**
 
 ---
 
@@ -28,7 +28,7 @@ Deployed Link: [json-schema-builder-kzx1.vercel.app/](json-schema-builder-kzx1.v
 
 ---
 
-### 🚀 Getting Started
+### Getting Started
 
 ```bash
 # 1. Clone the project
@@ -46,7 +46,7 @@ Now visit [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-### 📁 Project Structure
+### Project Structure
 
 ```
 src/
@@ -67,7 +67,7 @@ src/
 
 ---
 
-### 🧪 Scripts
+### Scripts
 
 ```bash
 npm run dev       # Start development server
@@ -77,7 +77,7 @@ npm run preview   # Preview production build
 
 ---
 
-### 📦 Example Output
+### Example Output
 
 ```json
 {
