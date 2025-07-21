@@ -1,5 +1,9 @@
 ### JSON Schema Builder
-Deployed Link: json-schema-builder-kzx1.vercel.app/
+
+```
+
+Deployed Link: [json-schema-builder-kzx1.vercel.app/]
+---
 ---
 
 ### Features
