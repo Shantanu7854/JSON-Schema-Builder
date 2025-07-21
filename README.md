@@ -1,16 +1,16 @@
 ### JSON Schema Builder
 
-```
+Deployed Link: [json-schema-builder-kzx1.vercel.app/](json-schema-builder-kzx1.vercel.app/) 
 
-Deployed Link: [json-schema-builder-kzx1.vercel.app/]
----
 ---
 
-### Features
+### ✨ Features
 
-* Add/edit/delete fields
-* Support for **nested schemas**
-* Live **JSON preview**
+* ➕ Add/edit/delete fields
+* 🔁 Support for **nested schemas**
+* 🧪 Live **JSON preview**
+* 💡 Built with **React Hook Form**, **ShadCN**, and **Tailwind**
+* ⚡ Lightning-fast development with **Vite + TypeScript**
 
 ---
 
