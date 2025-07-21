@@ -1,6 +1,6 @@
 ### JSON Schema Builder
 
-Deployed Link: [json-schema-builder-kzx1.vercel.app/](json-schema-builder-kzx1.vercel.app/) 
+Deployed Link: [https://json-schema-builder-kzx1.vercel.app/](https://json-schema-builder-kzx1.vercel.app/) 
 
 ---
 
