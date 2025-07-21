@@ -1,5 +1,5 @@
 // src/App.tsx
-import React from 'react';
+// import React from 'react';
 import SchemaBuilder from './components/SchemaBuilder';
 import './index.css'; // Or App.css for global styles
 
